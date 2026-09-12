@@ -4,6 +4,14 @@ import static java.util.Map.entry;
 final String[] RAW_MODE = {"/bin/sh", "-c", "stty raw -echo </dev/tty"};
 final String[] COOKED_MODE = {"/bin/sh", "-c", "stty sane </dev/tty"};
 
+private static final String CONFIG = "config.properties";
+public static final Map<String, Integer> DEFAULT_BINDS = Map.ofEntries(
+        entry("UP", 65), // UP
+        entry("DOWN", 66), // DOWN
+        entry("ENTER", 13), // ENTER
+        entry("EXIT",27) // EXIT
+);
+
 // Program Vars
 boolean debugMode = true;
 int key = -1;
@@ -12,25 +20,9 @@ int page = 0;
 String err = "";
 boolean highlight = false;
 boolean rebind = false;
-final List<String[]> PAGES = new ArrayList<>(List.of(
-        new String[]{
-                "Keybinds",
-                "File Tree"
-        },
-        BINDS.entrySet().stream()
-                .map(entry -> String.format(
-                        "%s: %s",
-                        entry.getKey(),
-                        ALIASES.getOrDefault(entry.getValue(), String.valueOf((char) (int) entry.getValue()))
-                )).toArray(String[]::new)
-));
 
-public static final Map<String, Integer> BINDS = new HashMap<>(Map.ofEntries(
-        entry("UP", 65), // UP
-        entry("DOWN", 66), // DOWN
-        entry("ENTER", 13), // ENTER
-        entry("EXIT",27) // EXIT
-));
+public static final Map<String, Integer> BINDS = new HashMap<>();
+final List<String[]> PAGES = new ArrayList<>();
 
 public static final Map<Integer, String> ALIASES = Map.of(
         13, "↵ Return",
@@ -43,6 +35,20 @@ public static final Map<Integer, String> ALIASES = Map.of(
 );
 
 void main() throws IOException, InterruptedException {
+    // Page Data
+    loadBinds();
+    PAGES.add(new String[]{"Keybinds","File Tree"});
+    PAGES.add(
+            Stream.concat(
+                    BINDS.entrySet().stream()
+                            .map(entry -> String.format(
+                                    "%s: %s",
+                                    entry.getKey(),
+                                    ALIASES.getOrDefault(entry.getValue(), String.valueOf((char) (int) entry.getValue()))
+                            )), Stream.of("[ SAVE ]")
+            ).toArray(String[]::new)
+    );
+
     // Raw Mode
     Runtime.getRuntime().exec(RAW_MODE).waitFor();
 
@@ -71,12 +77,16 @@ void main() throws IOException, InterruptedException {
                     err = String.format("'%s' already used for %s",ALIASES.getOrDefault(key,String.valueOf((char) key)),keys.get(values.indexOf(key)));
                 } else if (values.get(index) != key) {
                     BINDS.replace(line.substring(0,line.indexOf(':')),key);
-                    PAGES.set(1,BINDS.entrySet().stream()
-                            .map(entry -> String.format(
-                                    "%s: %s",
-                                    entry.getKey(),
-                                    ALIASES.getOrDefault(entry.getValue(), String.valueOf((char) (int) entry.getValue()))
-                            )).toArray(String[]::new));
+                    PAGES.set(1,
+                            Stream.concat(
+                                    BINDS.entrySet().stream()
+                                            .map(entry -> String.format(
+                                                    "%s: %s",
+                                                    entry.getKey(),
+                                                    ALIASES.getOrDefault(entry.getValue(), String.valueOf((char) (int) entry.getValue()))
+                                            )), Stream.of("[ SAVE ]")
+                            ).toArray(String[]::new)
+                    );
                 }
                 key = -1;
                 rebind = false;
@@ -96,8 +106,12 @@ void main() throws IOException, InterruptedException {
             if (key == BINDS.get("ENTER")) {
                 err = "";
                 if (page == 1) {
-                    rebind = !rebind;
-                    if (rebind) key = -1;
+                    if (index == PAGES.get(1).length - 1) {
+                        saveBinds();
+                    } else {
+                        rebind = !rebind;
+                        if (rebind) key = -1;
+                    }
                 }
                 if (page == 0 && index == 0) page++;
             }
@@ -140,4 +154,36 @@ private void renderFrame(String[] lines) {
     if (debugMode) IO.print(String.format("Index: %s\r\n", index));
     if (debugMode) IO.print(String.format("Page: %s\r\n", page));
     System.out.flush(); // Clear Cache
+}
+
+private void loadBinds() throws IOException {
+    Properties properties = new Properties();
+    File file = new File(CONFIG);
+
+    if (!file.exists()) {
+        DEFAULT_BINDS.forEach((k, v) -> properties.setProperty(k, String.valueOf(v)));
+        try (OutputStream out = new FileOutputStream(file)) {
+            properties.store(out, "Keybinds");
+        }
+    } else {
+        try (InputStream in = new FileInputStream(file)) {
+            properties.load(in);
+        }
+    }
+
+    BINDS.clear();
+    for (String key : properties.stringPropertyNames()) {
+        BINDS.put(key, Integer.parseInt(properties.getProperty(key)));
+    }
+}
+
+private void saveBinds() {
+    Properties properties = new Properties();
+    BINDS.forEach((k, v) -> properties.setProperty(k, String.valueOf(v)));
+    try (OutputStream out = new FileOutputStream(CONFIG)) {
+        properties.store(out, "Keybinds");
+        err = "Configuration Saved";
+    } catch (IOException e) {
+        err = "Failed to Save Configuration: " + e.getMessage();
+    }
 }
