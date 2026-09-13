@@ -31,3 +31,9 @@ bin/
 
 ### Proj ###
 src/config.properties
+.idea/
+*.xml
+
+# .idea keeps
+!.idea/vcs.xml
+!.idea/codeStyles/
