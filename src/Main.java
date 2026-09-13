@@ -1,8 +1,6 @@
-import static java.util.Map.entry;
+import terminal.TerminalMode;
 
-// Terminal Mode CMDs
-final String[] RAW_MODE = {"/bin/sh", "-c", "stty raw -echo </dev/tty"};
-final String[] COOKED_MODE = {"/bin/sh", "-c", "stty sane </dev/tty"};
+import static java.util.Map.entry;
 
 private static final String CONFIG = "config.properties";
 public static final Map<String, Integer> DEFAULT_BINDS = Map.ofEntries(
@@ -50,7 +48,7 @@ void main() throws IOException, InterruptedException {
     );
 
     // Raw Mode
-    Runtime.getRuntime().exec(RAW_MODE).waitFor();
+    TerminalMode.enableRaw();
 
     // Render Init Frame
     renderFrame(PAGES.getFirst());
@@ -133,7 +131,7 @@ void main() throws IOException, InterruptedException {
         // Reset Terminal
         IO.print("\u001B[2J\u001B[H\u001B[?25h");
         System.out.flush();
-        Runtime.getRuntime().exec(COOKED_MODE).waitFor();
+        TerminalMode.enableCooked();
     }
 }
 
