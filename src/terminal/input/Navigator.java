@@ -3,6 +3,11 @@ package terminal.input;
 import terminal.page.Page;
 import terminal.page.Pages;
 
+/**
+ * The framework to allow for screen nav
+ * Some just flip vars in Main but that's
+ * okay for now . . .
+ */
 public final class Navigator {
     private Page page = Pages.MAIN_MENU;
     private int index = 0;

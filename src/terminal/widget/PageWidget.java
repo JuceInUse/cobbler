@@ -3,6 +3,10 @@ package terminal.widget;
 import terminal.lang.TranslationKey;
 import terminal.page.Page;
 
+/**
+ * Widgets that navigate pages
+ * use this format
+ */
 public class PageWidget implements Widget {
     private final TranslationKey id;
     private final String fallback;

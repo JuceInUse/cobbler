@@ -2,6 +2,10 @@ package terminal.widget;
 
 import terminal.lang.TranslationKey;
 
+/**
+ * Widgets that cannot be interacted with
+ * use this format
+ */
 public final class LabelWidget implements Widget {
     private final TranslationKey id;
     private final String fallback;

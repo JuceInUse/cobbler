@@ -3,6 +3,11 @@ package terminal.lang;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Defines the default translations and
+ * allows for key generation for use in
+ * widgets
+ */
 public final class Translate {
     private static final List<TranslationKey> KEYS = new ArrayList<>();
     public static final TranslationKey MAIN_MENU = genKey("page.cobbler.main_menu", "Main Menu");

@@ -2,6 +2,13 @@ package terminal;
 
 import java.io.IOException;
 
+
+/**
+ * Handles the changing of a terminal from raw to
+ * cooked mode. Currently only supports Unix-based
+ * terminals (I think?)
+ */
+
 public class TerminalMode {
     private static final String[] RAW_MODE = new String[]{"stty", "raw", "-echo"};
     private static final String[] COOKED_MODE = new String[]{"stty", "sane"};

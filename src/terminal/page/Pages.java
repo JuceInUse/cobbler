@@ -8,6 +8,9 @@ import terminal.widget.Widget;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Holds all pages used by Cobbler
+ */
 public final class Pages {
     private static final List<Page> PAGES = new ArrayList<>();
 

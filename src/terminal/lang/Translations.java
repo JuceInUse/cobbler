@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Holds the translation logic (mostly)
+ * allows for translation customization
+ * via resources/lang/[lang].properties
+ * May convert to json5 . . .
+ */
 public final class Translations {
     private static final String RESOURCES_DIR = "resources";
     private static final String LANG_DIR = RESOURCES_DIR + "/lang";

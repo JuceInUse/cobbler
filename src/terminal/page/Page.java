@@ -2,6 +2,9 @@ package terminal.page;
 
 import terminal.widget.Widget;
 
+/**
+ * Defines the Page var type
+ */
 public final class Page {
     private final String id;
     private final Widget[] widgets;
