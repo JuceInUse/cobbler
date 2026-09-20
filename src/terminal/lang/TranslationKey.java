@@ -10,7 +10,5 @@ public record TranslationKey(String id, String fallback) {
     }
 
     @Override
-    public String toString() {
-        return get();
-    }
+    public String toString() { return get(); }
 }

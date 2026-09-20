@@ -1,5 +1,6 @@
 package terminal.widget;
 
+import terminal.input.Navigator;
 import terminal.page.Page;
 
 /**
@@ -10,5 +11,10 @@ public interface Widget {
 
     default Page toPage() {
         return null;
+    }
+
+    default void onEnter(Navigator nav) {
+        Page toPage = toPage();
+        if (toPage != null) nav.goToPage(toPage);
     }
 }
