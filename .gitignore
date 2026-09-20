@@ -33,6 +33,7 @@ bin/
 src/config.properties
 .idea/
 *.xml
+src/resources/
 
 # .idea keeps
 !.idea/vcs.xml
